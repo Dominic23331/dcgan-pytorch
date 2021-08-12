@@ -1,36 +1,45 @@
 # DCGAN-pytorch
 
-#### Description
-{**When you're done, you can delete the content in this README and update the file with details for others getting started with your repository**}
+#### Requirements
+pytorch==1.9.0
 
-#### Software Architecture
-Software architecture description
+torchvision==0.10.0
 
-#### Installation
+#### Generate
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+1. Change your model path in defaults of class DCGAN
 
-#### Instructions
+   ```python
+   class DCGAN:
+       _defaults = {
+           "lr_d": 0.001,
+           "lr_g": 0.001,
+           "nz": 128,
+           "nc": 3,
+           "ngf": 64,
+           "ndf": 64,
+           "device": "cuda",
+           "model_path": "你的模型文件路径"
+       }
+   ```
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+2. Run generate.py to generate image.
 
-#### Contribution
+#### Train
 
-1.  Fork the repository
-2.  Create Feat_xxx branch
-3.  Commit your code
-4.  Create Pull Request
+1. Copy your dataset to ./dataset/data
 
+2. Run /dataset/data2csv.py to generate training index file
 
-#### Gitee Feature
+3. Set the parameters in train.py and run this code.
 
-1.  You can use Readme\_XXX.md to support different languages, such as Readme\_en.md, Readme\_zh.md
-2.  Gitee blog [blog.gitee.com](https://blog.gitee.com)
-3.  Explore open source project [https://gitee.com/explore](https://gitee.com/explore)
-4.  The most valuable open source project [GVP](https://gitee.com/gvp)
-5.  The manual of Gitee [https://gitee.com/help](https://gitee.com/help)
-6.  The most popular members  [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+   ```python
+   EPOCH = 100
+   BATCH_SIZE = 128
+   ```
+
+#### Reference
+
+1.  [PyTorch教程之DCGAN_我的学习笔记-CSDN博客](https://blog.csdn.net/weixin_36811328/article/details/88420820)
+2.  [DCGAN Tutorial — PyTorch Tutorials 1.9.0+cu102 documentation](https://pytorch.org/tutorials/beginner/dcgan_faces_tutorial.html)
+

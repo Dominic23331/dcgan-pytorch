@@ -1,39 +1,46 @@
 # DCGAN-pytorch
 
-#### 介绍
-{**以下是 Gitee 平台说明，您可以替换此简介**
-Gitee 是 OSCHINA 推出的基于 Git 的代码托管平台（同时支持 SVN）。专为开发者提供稳定、高效、安全的云端软件开发协作平台
-无论是个人、团队、或是企业，都能够用 Gitee 实现代码托管、项目管理、协作开发。企业项目请看 [https://gitee.com/enterprises](https://gitee.com/enterprises)}
+#### 所需环境
+pytorch==1.9.0
 
-#### 软件架构
-软件架构说明
+torchvision==0.10.0
 
 
-#### 安装教程
+#### 生成步骤
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+1. 在DCGAN_core.py文件中修改DCGAN类中的defaults选项，将训练模型路径换为自己的模型路径
 
-#### 使用说明
+   ```python
+   class DCGAN:
+       _defaults = {
+           "lr_d": 0.001,
+           "lr_g": 0.001,
+           "nz": 128,
+           "nc": 3,
+           "ngf": 64,
+           "ndf": 64,
+           "device": "cuda",
+           "model_path": "你的模型文件路径"
+       }
+   ```
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+2. 运行generate.py进行生成图片
 
-#### 参与贡献
+#### 训练步骤
 
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
+1. 将数据集存放至./dataset/data路径中
 
+2. 运行./dataset/data2csv.py文件，生成训练索引文件
 
-#### 特技
+3. 在train.py文件中设置训练参数，并进行训练
 
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+   ```python
+   EPOCH = 100
+   BATCH_SIZE = 128
+   ```
+
+#### 参考
+
+1.  [PyTorch教程之DCGAN_我的学习笔记-CSDN博客](https://blog.csdn.net/weixin_36811328/article/details/88420820)
+2.  [DCGAN Tutorial — PyTorch Tutorials 1.9.0+cu102 documentation](https://pytorch.org/tutorials/beginner/dcgan_faces_tutorial.html)
+
