@@ -35,6 +35,11 @@ class DCGAN:
             self.Discriminator.cuda()
 
     def summary(self, net):
+        """
+        网络结构可视化
+        :param net:输入想要可视化的网络名称
+        :return: None
+        """
         if net == "Generator":
             summary(self.Generator, (self.nz, 1, 1))
         elif net == "Discriminator":
@@ -43,6 +48,14 @@ class DCGAN:
             raise KeyError("请输入Generator或Discriminator")
 
     def train(self, epoch=20, bach_size=64):
+        """
+        进行训练
+        :param epoch: epoch数值
+        :param bach_size: batch的大小
+        :return: None
+        """
+
+        # 读取数据集
         dataset = DCGAN_dataloader("./dataset/data.csv", transforms=transform())
         data = DataLoader(
             dataset,
@@ -50,7 +63,7 @@ class DCGAN:
             shuffle=True,
             drop_last=True
         )
-
+        # 设置生成器和判别器的优化器为Adam
         optim_D = Adam(
             self.Discriminator.parameters(),
             lr=self.lr_d,
@@ -61,7 +74,7 @@ class DCGAN:
             lr=self.lr_g,
             betas=[0.5, 0.999]
         )
-
+        # 设置损失函数为二值交叉熵损失
         loss_func = BCELoss()
 
         loss_g_log = []
@@ -69,22 +82,23 @@ class DCGAN:
         loss_d = 0
         loss_g = 0
         print("#" * 10 + " 开始训练 " + "#" * 10)
+        # 开始训练
         with tqdm(total=epoch, desc="训练进度", postfix=dict, mininterval=0.3) as pbar:
             for i_epoch in range(epoch):
                 loss_d = 0
                 loss_g = 0
-                for i, batch_data in enumerate(data):
-                    img = batch_data
+                for i, img in enumerate(data):
                     img = Variable(img)
                     if self.device == "cuda":
                         img = img.cuda()
+                    # 将数据喂入Discriminator
                     self.Discriminator.zero_grad()
                     label = torch.ones((bach_size,), device=self.device)
                     out = self.Discriminator(img).view(-1)
                     errD_real = loss_func(out, label)
                     errD_real.backward()
                     D_x = out.mean().item()
-
+                    # 使用Generator生成假数据喂入Discriminator进行判别
                     noise = torch.randn(bach_size, self.nz, 1, 1, device=self.device)
                     fake = self.Generator(noise)
                     label.fill_(0)
@@ -95,7 +109,7 @@ class DCGAN:
                     errD = errD_fake + errD_real
                     loss_d += errD.item()
                     optim_D.step()
-
+                    # 通过Discriminator返回的数值更新Generator
                     self.Generator.zero_grad()
                     label.fill_(1)
                     out = self.Discriminator(fake).view(-1)
@@ -123,13 +137,19 @@ class DCGAN:
                            "./log/model_g/epoch{}_loss{}.pth".format(i_epoch, loss_g / len(loss_g_log)))
                 torch.save(self.Discriminator.state_dict(),
                            "./log/model_d/epoch{}_loss{}.pth".format(i_epoch, loss_d / len(loss_d_log)))
+        # 清空缓存
         torch.cuda.empty_cache()
+        # 保存loss日志文件
         loss_log = pd.DataFrame()
         loss_log["g_loss"] = loss_g_log
         loss_log["d_loss"] = loss_d_log
         loss_log.to_csv("./log/loss/loss.csv")
 
     def draw_loss(self):
+        """
+        画loss曲线
+        :return: None
+        """
         loss = pd.read_csv("./log/loss/loss.csv")
         plt.plot(loss["g_loss"], color="orange", label="Generator")
         plt.plot(loss["d_loss"], color="red", label="Discriminitor")
@@ -137,6 +157,11 @@ class DCGAN:
         plt.show()
 
     def generate(self, path="./img/generate.jpg"):
+        """
+        生成图片
+        :param path: 生成图片的路径
+        :return: None
+        """
         param = torch.load(self.model_path)
         self.Generator.load_state_dict(param)
         with torch.no_grad():
