@@ -23,7 +23,7 @@ class DCGAN:
         "ngf": 64,
         "ndf": 64,
         "device": "cuda",
-        "model_path": "你的模型文件路径"
+        "model_path": "你的模型路径h"
     }
 
     def __init__(self):
@@ -128,7 +128,7 @@ class DCGAN:
                         loss_d_log.append(loss_d / (i + 1))
                 with torch.no_grad():
                     img = self.Generator(torch.randn(20, self.nz, 1, 1, device=self.device))
-                img = img * 255
+                img = (img + 1) * 127
                 for j in range(20):
                     img = np.array(img[j].cpu()).transpose((1, 2, 0))
                     cv2.imwrite("/log/img_log/epoch{}/img{}.jpg".format(i_epoch, j), img)
@@ -166,13 +166,13 @@ class DCGAN:
         self.Generator.load_state_dict(param)
         with torch.no_grad():
             img = self.Generator(torch.randn(1, self.nz, 1, 1, device=self.device))
-        img = img * 255
         img = np.array(img[0].cpu()).transpose((1, 2, 0))
-        cv2.imshow("generate", img)
+        img = (img + 1) * 127
+        cv2.imshow("generate", img.astype(np.uint8))
         cv2.waitKey(0)
         cv2.imwrite(path, img)
 
 
 if __name__ == '__main__':
     core = DCGAN()
-    core.draw_loss()
+    core.generate()
