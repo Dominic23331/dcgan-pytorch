@@ -1,3 +1,5 @@
+import os
+
 import torch
 from torch.autograd import Variable
 from torch.optim import Adam
@@ -127,11 +129,13 @@ class DCGAN:
                         loss_g_log.append(loss_g / (i + 1))
                         loss_d_log.append(loss_d / (i + 1))
                 with torch.no_grad():
-                    img = self.Generator(torch.randn(20, self.nz, 1, 1, device=self.device))
+                    img = self.Generator(torch.randn(20, self.nz, 1, 1, device=self.device)).cpu()
                 img = (img + 1) * 127
+                os.mkdir("./log/img_log/epoch{}".format(i_epoch))
                 for j in range(20):
-                    img = np.array(img[j].cpu()).transpose((1, 2, 0))
-                    cv2.imwrite("/log/img_log/epoch{}/img{}.jpg".format(i_epoch, j), img)
+                    img_ = np.array(img[j]).transpose((1, 2, 0))
+
+                    cv2.imwrite("./log/img_log/epoch{}/img{}.jpg".format(i_epoch, j), img_)
                 pbar.update(1)
                 torch.save(self.Generator.state_dict(),
                            "./log/model_g/epoch{}_loss{}.pth".format(i_epoch, loss_g / len(loss_g_log)))

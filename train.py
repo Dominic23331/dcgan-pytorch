@@ -1,6 +1,6 @@
 from DCGAN_core import DCGAN
 
-EPOCH = 100
+EPOCH = 30
 BATCH_SIZE = 128
 
 if __name__ == '__main__':
